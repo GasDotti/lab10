@@ -1,0 +1,6 @@
+*.class
+bin
+gradle
+.gradle
+*.kts
+build
