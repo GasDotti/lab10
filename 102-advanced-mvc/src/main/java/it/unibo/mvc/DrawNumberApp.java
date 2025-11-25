@@ -1,16 +1,17 @@
 package it.unibo.mvc;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
 
 /**
  */
 public final class DrawNumberApp implements DrawNumberViewObserver {
-    private static final int MIN = 0;
-    private static final int MAX = 100;
-    private static final int ATTEMPTS = 10;
 
+    private static Configuration config;
     private final DrawNumber model;
     private final List<DrawNumberView> views;
 
@@ -27,7 +28,33 @@ public final class DrawNumberApp implements DrawNumberViewObserver {
             view.setObserver(this);
             view.start();
         }
-        this.model = new DrawNumberImpl(MIN, MAX, ATTEMPTS);
+
+        config = setConfigurationFromFile();
+
+        this.model = new DrawNumberImpl(config.getMin(), config.getMax(), config.getAttempts());
+    }
+
+    private Configuration setConfigurationFromFile() {
+
+        final Configuration.Builder builder = new Configuration.Builder();
+
+        final ClassLoader cl = getClass().getClassLoader();
+        try (
+            final InputStreamReader is = new InputStreamReader(cl.getResourceAsStream("config.yml"));
+            final BufferedReader in = new BufferedReader(is)
+        ) {
+            String sMin = in.readLine().split(":")[1]; //Save only the second part of the String, the one containing the number.
+            String sMax = in.readLine().split(":")[1];
+            String sAttempts = in.readLine().split(":")[1];
+
+            builder.setMin(Integer.parseInt(sMin));
+            builder.setMax(Integer.parseInt(sMax));
+            builder.setAttempts(Integer.parseInt(sAttempts));
+        } catch (IOException e) {
+            System.err.println(e);
+        }
+        
+        return builder.build();
     }
 
     @Override
