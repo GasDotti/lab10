@@ -49,7 +49,7 @@ public final class MusicGroupImpl implements MusicGroup {
     public Stream<String> albumInYear(final int year) {
         final List<String> s = new ArrayList<>();
         this.albums.forEach((k, v) -> {
-            if(v.equals((Object) year)) {
+            if (v.equals((Object) year)) {
                 s.add(k);
             }
         });
@@ -79,7 +79,7 @@ public final class MusicGroupImpl implements MusicGroup {
             .stream()
             .filter(s -> s.getAlbumName().isPresent())
             .filter(s -> albumName.equals(s.getAlbumName().get()))
-            .map(s -> s.getDuration())
+            .map(Song::getDuration)
             .reduce((a, b) -> a + b)
             .get() / this.countSongs(albumName));
     }
@@ -100,12 +100,12 @@ public final class MusicGroupImpl implements MusicGroup {
         .max((a1, a2) -> Double.compare(getAlbumDuration(a1), getAlbumDuration(a2)));
     }
 
-    private double getAlbumDuration(String name) {
+    private double getAlbumDuration(final String name) {
         return this.songs
         .stream()
         .filter(s -> s.getAlbumName().isPresent())
         .filter(s -> name.equals(s.getAlbumName().get()))
-        .map(s -> s.getDuration())
+        .map(Song::getDuration)
         .reduce((d1, d2) -> d1 + d2)
         .orElse(0.0);
     }
