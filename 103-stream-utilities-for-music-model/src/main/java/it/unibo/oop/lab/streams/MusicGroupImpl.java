@@ -60,7 +60,8 @@ public final class MusicGroupImpl implements MusicGroup {
     public int countSongs(final String albumName) {
         return (int) this.songs
         .stream()
-        .filter(s -> albumName.equals(s.getAlbumName().orElse("")))
+        .filter(s -> s.getAlbumName().isPresent())
+        .filter(s -> albumName.equals(s.getAlbumName().get()))
         .count();
     }
 
@@ -76,7 +77,8 @@ public final class MusicGroupImpl implements MusicGroup {
     public OptionalDouble averageDurationOfSongs(final String albumName) {
         return OptionalDouble.of(this.songs
             .stream()
-            .filter(s -> albumName.equals(s.getAlbumName().orElse("")))
+            .filter(s -> s.getAlbumName().isPresent())
+            .filter(s -> albumName.equals(s.getAlbumName().get()))
             .map(s -> s.getDuration())
             .reduce((a, b) -> a + b)
             .get() / this.countSongs(albumName));
